@@ -54,21 +54,21 @@ function generateMail(data) {
         data.matchedJobs
             .map((job, index) => `
                 <tr>
-                    <td class="job-cell" style="font-weight: bold; color: #667eea; text-align: center; width: 5%;">
+                    <td class="job-cell" style="font-weight: bold; color: #667eea; text-align: center; width: 8%;">
                         ${index + 1}
                     </td>
-                    <td class="job-cell" style="width: 45%;">
+                    <td class="job-cell" style="width: 50%;">
                         <div class="job-title">${job.title}</div>
                         <div class="job-company">${job.company}</div>
                         <div class="job-source">📱 ${job.source || "LinkedIn"}</div>
                     </td>
-                    <td class="job-cell" style="width: 20%;">
+                    <td class="job-cell" style="width: 18%;">
                         <div class="job-location">📍 ${job.location || "N/A"}</div>
                     </td>
-                    <td class="job-cell" style="width: 15%;">
+                    <td class="job-cell" style="width: 10%;">
                         <div class="job-posted">🕐 ${job.posted || "N/A"}</div>
                     </td>
-                    <td class="job-cell" style="text-align: center; width: 15%;">
+                    <td class="job-cell" style="text-align: center; width: 14%; vertical-align: middle;">
                         <a href="${job.url}" target="_blank" class="apply-btn">
                             🚀 Apply
                         </a>
@@ -229,6 +229,9 @@ function generateMail(data) {
                     font-size: 11px;
                     font-weight: bold;
                     white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    max-width: 100%;
                 }
                 
                 .footer {
@@ -320,7 +323,7 @@ function generateMail(data) {
                     
                     .apply-btn {
                         padding: 5px 8px;
-                        font-size: 10px;
+                        font-size: 9px;
                     }
                     
                     .footer {
@@ -342,6 +345,11 @@ function generateMail(data) {
                     
                     .job-cell {
                         padding: 8px 4px;
+                    }
+                    
+                    .apply-btn {
+                        padding: 4px 6px;
+                        font-size: 8px;
                     }
                 }
             </style>
@@ -405,11 +413,11 @@ function generateMail(data) {
                     <table class="jobs-table">
                         <thead>
                             <tr>
-                                <th style="width: 5%;">#</th>
-                                <th style="width: 45%;">Job Title & Company</th>
-                                <th style="width: 20%;">Location</th>
-                                <th style="width: 15%;">Posted</th>
-                                <th style="width: 15%;">Action</th>
+                                <th style="width: 8%;">#</th>
+                                <th style="width: 50%;">Job Title & Company</th>
+                                <th style="width: 18%;">Location</th>
+                                <th style="width: 10%;">Posted</th>
+                                <th style="width: 14%;">Action</th>
                             </tr>
                         </thead>
                         <tbody>
