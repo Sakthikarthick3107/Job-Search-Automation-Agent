@@ -50,17 +50,39 @@ function generateMail(data) {
         `;
     }
 
-    const jobsHtml =
-        data.matchedJobs
-            .map((job, index) => `
+    // Group jobs by portal/source
+    const jobsBySource = {};
+    data.matchedJobs.forEach(job => {
+        const source = job.source || "LinkedIn";
+        if (!jobsBySource[source]) {
+            jobsBySource[source] = [];
+        }
+        jobsBySource[source].push(job);
+    });
+
+    // Portal icons and colors
+    const portalConfig = {
+        "LinkedIn": { icon: "💼", color: "#0073b1" },
+        "Indeed": { icon: "📋", color: "#003580" },
+        "Naukri": { icon: "🇮🇳", color: "#45a029" },
+        "Glassdoor": { icon: "💬", color: "#0caa41" },
+        "Stack Overflow": { icon: "🖤", color: "#f48024" }
+    };
+
+    // Generate portal sections HTML
+    let portalsHtml = '';
+    Object.entries(jobsBySource).forEach(([source, jobs]) => {
+        const config = portalConfig[source] || { icon: "📱", color: "#667eea" };
+        
+        const jobsRows = jobs
+            .map((job, idx) => `
                 <tr>
-                    <td class="job-cell" style="font-weight: bold; color: #667eea; text-align: center; width: 8%;">
-                        ${index + 1}
+                    <td class="job-cell" style="font-weight: bold; color: ${config.color}; text-align: center; width: 8%;">
+                        ${idx + 1}
                     </td>
                     <td class="job-cell" style="width: 50%;">
                         <div class="job-title">${job.title}</div>
                         <div class="job-company">${job.company}</div>
-                        <div class="job-source">📱 ${job.source || "LinkedIn"}</div>
                     </td>
                     <td class="job-cell" style="width: 18%;">
                         <div class="job-location">📍 ${job.location || "N/A"}</div>
@@ -69,13 +91,38 @@ function generateMail(data) {
                         <div class="job-posted">🕐 ${job.posted || "N/A"}</div>
                     </td>
                     <td class="job-cell" style="text-align: center; width: 14%; vertical-align: middle;">
-                        <a href="${job.url}" target="_blank" class="apply-btn">
+                        <a href="${job.url}" target="_blank" class="apply-btn" style="background: ${config.color};">
                             🚀 Apply
                         </a>
                     </td>
                 </tr>
             `)
             .join("");
+
+        portalsHtml += `
+            <div class="portal-section">
+                <div class="portal-header" style="background: ${config.color}; color: white;">
+                    <span class="portal-icon">${config.icon}</span>
+                    <span class="portal-name">${source}</span>
+                    <span class="portal-count">${jobs.length} jobs</span>
+                </div>
+                <table class="jobs-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 8%;">#</th>
+                            <th style="width: 50%;">Job Title & Company</th>
+                            <th style="width: 18%;">Location</th>
+                            <th style="width: 10%;">Posted</th>
+                            <th style="width: 14%;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${jobsRows}
+                    </tbody>
+                </table>
+            </div>
+        `;
+    });
 
     return `
     <html>
@@ -232,6 +279,38 @@ function generateMail(data) {
                     overflow: hidden;
                     text-overflow: ellipsis;
                     max-width: 100%;
+                }
+                
+                /* Portal Section Styles */
+                .portal-section {
+                    margin-bottom: 20px;
+                    border-radius: 8px;
+                    overflow: hidden;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                }
+                
+                .portal-header {
+                    padding: 12px 15px;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    font-weight: bold;
+                    font-size: 14px;
+                }
+                
+                .portal-icon {
+                    font-size: 18px;
+                }
+                
+                .portal-name {
+                    flex: 1;
+                }
+                
+                .portal-count {
+                    background: rgba(255,255,255,0.3);
+                    padding: 2px 8px;
+                    border-radius: 12px;
+                    font-size: 12px;
                 }
                 
                 .footer {

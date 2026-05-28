@@ -13,6 +13,14 @@ const {
 } = require("./services/naukri.service");
 
 const {
+    fetchGlassdoorJobs
+} = require("./services/glassdoor.service");
+
+const {
+    fetchStackOverflowJobs
+} = require("./services/stackoverflow.service");
+
+const {
     sendMail
 } = require("./services/mail.service");
 
@@ -83,6 +91,48 @@ async function main() {
 
         console.log(
             `✅ Fetched ${jobs.length} jobs from Naukri`
+        );
+
+        allJobs = [...allJobs, ...jobs];
+    }
+
+    // ===== Glassdoor Jobs =====
+    console.log("\n📌 Fetching Jobs from Glassdoor\n");
+
+    for (const search of JOB_SEARCHES) {
+        console.log(
+            `Searching: ${search.query} in ${search.location}`
+        );
+
+        const jobs =
+            await fetchGlassdoorJobs(
+                search.query,
+                search.location
+            );
+
+        console.log(
+            `✅ Fetched ${jobs.length} jobs from Glassdoor`
+        );
+
+        allJobs = [...allJobs, ...jobs];
+    }
+
+    // ===== Stack Overflow Jobs =====
+    console.log("\n📌 Fetching Jobs from Stack Overflow\n");
+
+    for (const search of JOB_SEARCHES) {
+        console.log(
+            `Searching: ${search.query} in ${search.location}`
+        );
+
+        const jobs =
+            await fetchStackOverflowJobs(
+                search.query,
+                search.location
+            );
+
+        console.log(
+            `✅ Fetched ${jobs.length} jobs from Stack Overflow`
         );
 
         allJobs = [...allJobs, ...jobs];
