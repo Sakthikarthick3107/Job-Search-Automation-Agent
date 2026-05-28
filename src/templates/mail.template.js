@@ -53,39 +53,23 @@ function generateMail(data) {
     const jobsHtml =
         data.matchedJobs
             .map((job, index) => `
-                <tr style="border-bottom: 1px solid #e0e0e0;">
-                    <td style="padding: 12px; text-align: center; font-weight: bold; color: #667eea;">
+                <tr>
+                    <td class="job-cell" style="font-weight: bold; color: #667eea; text-align: center; width: 5%;">
                         ${index + 1}
                     </td>
-                    <td style="padding: 12px;">
-                        <div style="font-weight: bold; color: #333; font-size: 14px;">
-                            ${job.title}
-                        </div>
-                        <div style="color: #666; font-size: 12px;">
-                            ${job.company}
-                        </div>
+                    <td class="job-cell" style="width: 45%;">
+                        <div class="job-title">${job.title}</div>
+                        <div class="job-company">${job.company}</div>
+                        <div class="job-source">📱 ${job.source || "LinkedIn"}</div>
                     </td>
-                    <td style="padding: 12px; color: #666; font-size: 13px;">
-                        📍 ${job.location || "N/A"}
+                    <td class="job-cell" style="width: 20%;">
+                        <div class="job-location">📍 ${job.location || "N/A"}</div>
                     </td>
-                    <td style="padding: 12px; color: #666; font-size: 13px;">
-                        🕐 ${job.posted || "N/A"}
+                    <td class="job-cell" style="width: 15%;">
+                        <div class="job-posted">🕐 ${job.posted || "N/A"}</div>
                     </td>
-                    <td style="padding: 12px; text-align: center;">
-                        <a
-                            href="${job.url}"
-                            target="_blank"
-                            style="
-                                display: inline-block;
-                                padding: 8px 12px;
-                                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                                color: white;
-                                text-decoration: none;
-                                border-radius: 5px;
-                                font-size: 12px;
-                                font-weight: bold;
-                            "
-                        >
+                    <td class="job-cell" style="text-align: center; width: 15%;">
+                        <a href="${job.url}" target="_blank" class="apply-btn">
                             🚀 Apply
                         </a>
                     </td>
@@ -96,6 +80,8 @@ function generateMail(data) {
     return `
     <html>
         <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <style>
                 * {
                     margin: 0;
@@ -106,14 +92,15 @@ function generateMail(data) {
                 body {
                     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
                     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                    padding: 20px;
+                    padding: 10px;
                 }
                 
                 .container {
                     background: white;
                     border-radius: 15px;
                     box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-                    max-width: 900px;
+                    max-width: 100%;
+                    width: 100%;
                     margin: 0 auto;
                     overflow: hidden;
                 }
@@ -121,18 +108,18 @@ function generateMail(data) {
                 .header {
                     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                     color: white;
-                    padding: 40px 30px;
+                    padding: 30px 20px;
                     text-align: center;
                 }
                 
                 .header h1 {
-                    font-size: 28px;
-                    margin-bottom: 10px;
+                    font-size: 24px;
+                    margin-bottom: 8px;
                     letter-spacing: 1px;
                 }
                 
                 .header p {
-                    font-size: 14px;
+                    font-size: 13px;
                     opacity: 0.9;
                 }
                 
@@ -140,33 +127,39 @@ function generateMail(data) {
                     display: flex;
                     justify-content: space-around;
                     background: #f8f9fa;
-                    padding: 20px;
+                    padding: 15px;
                     border-bottom: 2px solid #e0e0e0;
+                    flex-wrap: wrap;
+                    gap: 10px;
                 }
                 
                 .stat-item {
                     text-align: center;
+                    flex: 1;
+                    min-width: 80px;
                 }
                 
                 .stat-number {
-                    font-size: 24px;
+                    font-size: 20px;
                     font-weight: bold;
                     color: #667eea;
                 }
                 
                 .stat-label {
-                    font-size: 12px;
+                    font-size: 11px;
                     color: #666;
-                    margin-top: 5px;
+                    margin-top: 3px;
                 }
                 
                 .content {
-                    padding: 30px;
+                    padding: 15px;
+                    overflow-x: auto;
                 }
                 
                 .jobs-table {
                     width: 100%;
                     border-collapse: collapse;
+                    font-size: 14px;
                 }
                 
                 .jobs-table thead {
@@ -175,6 +168,185 @@ function generateMail(data) {
                 }
                 
                 .jobs-table th {
+                    padding: 10px 8px;
+                    text-align: left;
+                    font-weight: bold;
+                    color: #667eea;
+                    font-size: 12px;
+                    text-transform: uppercase;
+                }
+                
+                .jobs-table tbody tr:hover {
+                    background: #f8f9fa;
+                }
+                
+                .job-cell {
+                    padding: 12px 8px;
+                    border-bottom: 1px solid #e0e0e0;
+                }
+                
+                .job-title {
+                    font-weight: bold;
+                    color: #333;
+                    font-size: 13px;
+                    line-height: 1.4;
+                    word-break: break-word;
+                }
+                
+                .job-company {
+                    color: #666;
+                    font-size: 11px;
+                    margin-top: 3px;
+                }
+                
+                .job-source {
+                    color: #999;
+                    font-size: 10px;
+                    margin-top: 2px;
+                }
+                
+                .job-location {
+                    color: #666;
+                    font-size: 12px;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+                
+                .job-posted {
+                    color: #666;
+                    font-size: 12px;
+                    white-space: nowrap;
+                }
+                
+                .apply-btn {
+                    display: inline-block;
+                    padding: 6px 10px;
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    color: white;
+                    text-decoration: none;
+                    border-radius: 5px;
+                    font-size: 11px;
+                    font-weight: bold;
+                    white-space: nowrap;
+                }
+                
+                .footer {
+                    background: #f8f9fa;
+                    padding: 15px;
+                    text-align: center;
+                    border-top: 1px solid #e0e0e0;
+                    font-size: 11px;
+                    color: #666;
+                }
+                
+                .footer-link {
+                    color: #667eea;
+                    text-decoration: none;
+                    font-weight: bold;
+                }
+                
+                /* Mobile Responsive */
+                @media (max-width: 600px) {
+                    body {
+                        padding: 5px;
+                    }
+                    
+                    .container {
+                        border-radius: 10px;
+                    }
+                    
+                    .header {
+                        padding: 20px 15px;
+                    }
+                    
+                    .header h1 {
+                        font-size: 20px;
+                    }
+                    
+                    .header p {
+                        font-size: 12px;
+                    }
+                    
+                    .stats {
+                        padding: 12px;
+                        gap: 8px;
+                    }
+                    
+                    .stat-number {
+                        font-size: 18px;
+                    }
+                    
+                    .stat-label {
+                        font-size: 10px;
+                    }
+                    
+                    .content {
+                        padding: 12px;
+                    }
+                    
+                    .jobs-table {
+                        font-size: 12px;
+                    }
+                    
+                    .jobs-table th {
+                        padding: 8px 6px;
+                        font-size: 10px;
+                    }
+                    
+                    .job-cell {
+                        padding: 10px 6px;
+                    }
+                    
+                    .job-title {
+                        font-size: 12px;
+                    }
+                    
+                    .job-company {
+                        font-size: 10px;
+                    }
+                    
+                    .job-source {
+                        font-size: 9px;
+                    }
+                    
+                    .job-location {
+                        font-size: 11px;
+                    }
+                    
+                    .job-posted {
+                        font-size: 11px;
+                    }
+                    
+                    .apply-btn {
+                        padding: 5px 8px;
+                        font-size: 10px;
+                    }
+                    
+                    .footer {
+                        padding: 12px;
+                        font-size: 10px;
+                    }
+                }
+                
+                @media (max-width: 480px) {
+                    .jobs-table th:nth-child(3),
+                    .jobs-table th:nth-child(4) {
+                        display: none;
+                    }
+                    
+                    .jobs-table td:nth-child(3),
+                    .jobs-table td:nth-child(4) {
+                        display: none;
+                    }
+                    
+                    .job-cell {
+                        padding: 8px 4px;
+                    }
+                }
+            </style>
+        </head>
+        <body>
                     padding: 12px;
                     text-align: left;
                     font-weight: bold;
