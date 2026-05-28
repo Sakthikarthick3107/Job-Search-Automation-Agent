@@ -1,0 +1,31 @@
+name: Daily Job Search
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # Every hour at :00 minutes (in UTC, your IST will vary by timezone offset)
+
+  workflow_dispatch:
+
+jobs:
+  run-job-search:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Packages
+        run: npm install
+
+      - name: Run LinkedIn Job Search
+        run: node src/index.js
+        env:
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+          JOB_SEARCHES: ${{ vars.JOB_SEARCHES }}
+          RESUME_URL: ${{ vars.RESUME_URL }}
