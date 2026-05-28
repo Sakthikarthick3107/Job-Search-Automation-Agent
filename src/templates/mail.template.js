@@ -499,9 +499,7 @@ function generateMail(data) {
                                 <th style="width: 14%;">Action</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            ${jobsHtml}
-                        </tbody>
+                            ${portalsHtml}
                     </table>
                 </div>
                 
