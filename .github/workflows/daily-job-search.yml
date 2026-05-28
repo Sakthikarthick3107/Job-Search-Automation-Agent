@@ -22,6 +22,9 @@ jobs:
       - name: Install Packages
         run: npm install
 
+      - name: Install Playwright Browsers
+        run: npx playwright install chromium
+
       - name: Run LinkedIn Job Search
         run: node src/index.js
         env:
