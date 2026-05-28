@@ -406,10 +406,10 @@ function generateMail(data) {
                         <thead>
                             <tr>
                                 <th style="width: 5%;">#</th>
-                                <th style="width: 30%;">Job Title & Company</th>
+                                <th style="width: 45%;">Job Title & Company</th>
                                 <th style="width: 20%;">Location</th>
                                 <th style="width: 15%;">Posted</th>
-                                <th style="width: 30%;">Action</th>
+                                <th style="width: 15%;">Action</th>
                             </tr>
                         </thead>
                         <tbody>
