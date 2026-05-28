@@ -4,7 +4,11 @@ on:
   schedule:
     - cron: '0 * * * *'  # Every hour at :00 minutes (in UTC, your IST will vary by timezone offset)
 
-  workflow_dispatch:
+  workflow_dispatch:  # Manual trigger from Actions tab
+
+  push:               # Auto-run on every push (important for new repos!)
+    branches:
+      - main
 
 jobs:
   run-job-search:
