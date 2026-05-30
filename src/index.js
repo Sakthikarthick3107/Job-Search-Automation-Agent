@@ -25,7 +25,8 @@ const {
 } = require("./services/mail.service");
 
 const {
-    JOB_SEARCHES
+    JOB_SEARCHES,
+    RESUME_URL
 } = require("./config/constants");
 
 async function main() {
@@ -145,7 +146,8 @@ async function main() {
     console.log("Sending email with job results");
 
     await sendMail({
-        matchedJobs: allJobs
+        matchedJobs: allJobs,
+        resumeUrl: RESUME_URL
     });
 
     console.log("Email sent successfully!");

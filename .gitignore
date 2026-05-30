@@ -3,6 +3,10 @@
 .env.local
 .env.*.local
 
+# Job configuration (if using local config instead of example)
+# Uncomment below if you want to keep jobs-config.json local
+# jobs-config.json
+
 # Node modules
 node_modules/
 npm-debug.log
@@ -17,7 +21,6 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
-
 # Logs
 logs/
 *.log

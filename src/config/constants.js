@@ -1,3 +1,44 @@
+const fs = require("fs");
+const path = require("path");
+
+// Load job searches from JSON config file
+function loadJobSearches() {
+    try {
+        const configPath = path.join(__dirname, "../../jobs-config.json");
+        const configFile = fs.readFileSync(configPath, "utf-8");
+        const config = JSON.parse(configFile);
+        return config.jobSearches || [];
+    } catch (error) {
+        console.warn("⚠️  Could not load jobs-config.json, using fallback searches");
+        return [
+            {
+                title: "Angular Developer",
+                query: "Angular Developer",
+                location: "Chennai",
+                type: "hybrid"
+            },
+            {
+                title: ".NET Developer",
+                query: ".NET Developer",
+                location: "Chennai",
+                type: "hybrid"
+            },
+            {
+                title: "Flutter Developer",
+                query: "Flutter Developer",
+                location: "Remote",
+                type: "remote"
+            },
+            {
+                title: "Software Developer",
+                query: "Software Developer",
+                location: "Chennai",
+                type: "hybrid"
+            }
+        ];
+    }
+}
+
 module.exports = {
 
     RESUME_URL:
@@ -6,33 +47,6 @@ module.exports = {
 
     JOB_LIMIT: 20,
 
-    // Parse job searches from environment variable
-    JOB_SEARCHES:
-        parseJobSearches(
-            process.env.JOB_SEARCHES
-        )
+    // Load job searches from JSON config file
+    JOB_SEARCHES: loadJobSearches()
 };
-
-function parseJobSearches(searchString) {
-    if (!searchString) {
-        // Use DEFAULT_JOB_SEARCHES from env or hardcoded fallback
-        searchString =
-            process.env.DEFAULT_JOB_SEARCHES ||
-            "Angular Developer|Chennai|hybrid,.NET Developer|Chennai|hybrid,Flutter Developer|Remote|remote,Software Developer|Chennai|hybrid";
-    }
-
-    return searchString
-        .split(",")
-        .map(search => {
-            const [query, location, type] =
-                search
-                    .trim()
-                    .split("|");
-
-            return {
-                query: query.trim(),
-                location: location.trim(),
-                type: type.trim()
-            };
-        });
-}

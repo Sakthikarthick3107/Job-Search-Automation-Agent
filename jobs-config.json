@@ -1,0 +1,28 @@
+{
+  "jobSearches": [
+    {
+      "title": "Angular Developer",
+      "query": "Angular Developer",
+      "location": "Chennai",
+      "type": "hybrid"
+    },
+    {
+      "title": ".NET Developer",
+      "query": ".NET Developer",
+      "location": "Chennai",
+      "type": "hybrid"
+    },
+    {
+      "title": "Flutter Developer",
+      "query": "Flutter Developer",
+      "location": "Remote",
+      "type": "remote"
+    },
+    {
+      "title": "Software Developer",
+      "query": "Software Developer",
+      "location": "Chennai",
+      "type": "hybrid"
+    }
+  ]
+}
