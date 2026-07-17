@@ -1,5 +1,4 @@
 const generateMail = (data) => {
-    // Group jobs by portal/source
     const jobsBySource = {};
     data.matchedJobs.forEach(job => {
         const source = job.source || "LinkedIn";
@@ -9,62 +8,48 @@ const generateMail = (data) => {
         jobsBySource[source].push(job);
     });
 
-    // Portal icons and colors
-    const portalConfig = {
-        "LinkedIn": { icon: "💼", color: "#0073b1" },
-        "Indeed": { icon: "📋", color: "#003580" },
-        "Naukri": { icon: "🇮🇳", color: "#45a029" },
-        "Glassdoor": { icon: "💬", color: "#0caa41" },
-        "Stack Overflow": { icon: "🖤", color: "#f48024" }
+    const portalIcons = {
+        "LinkedIn": "🔵",
+        "Indeed": "🔍",
+        "Naukri": "🇮🇳",
+        "Glassdoor": "🏢",
+        "Stack Overflow": "💻"
     };
 
-    // Generate portal sections HTML
     let portalsHtml = '';
     Object.entries(jobsBySource).forEach(([source, jobs]) => {
-        const config = portalConfig[source] || { icon: "📱", color: "#667eea" };
-        
-        // Portal header
+        const icon = portalIcons[source] || "📌";
+
         portalsHtml += `
-            <div class="portal-section">
-                <div class="portal-header" style="background-color: ${config.color};">
-                    <span class="portal-icon">${config.icon}</span>
-                    <span class="portal-name">${source}</span>
-                    <span class="portal-count">${jobs.length} jobs</span>
-                </div>
-                <table style="width: 100%; border-collapse: collapse;">
-                    <tbody>
+            <table class="portal" cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tr>
+                    <td class="portal-title">
+                        ${icon} ${source}
+                        <span class="portal-count">${jobs.length}</span>
+                    </td>
+                </tr>
         `;
 
-        // Jobs for this portal
-        jobs.forEach(job => {
+        jobs.forEach((job, idx) => {
             portalsHtml += `
-                <tr style="border-bottom: 1px solid #eee;">
-                    <td style="padding: 10px 8px; font-weight: bold; width: 50%;">
-                        <a href="${job.url}" style="color: #333; text-decoration: none; word-break: break-word;">
-                            ${job.title}
-                        </a>
-                    </td>
-                    <td style="padding: 10px 8px; font-size: 13px; color: #666; width: 20%;">
-                        ${job.company || 'N/A'}
-                    </td>
-                    <td style="padding: 10px 8px; font-size: 13px; color: #666; width: 15%;">
-                        ${job.location || 'N/A'}
-                    </td>
-                    <td style="padding: 10px 8px; font-size: 12px; text-align: center;">
-                        <a href="${job.url}" style="display: inline-block; padding: 6px 12px; background-color: ${config.color}; color: white; text-decoration: none; border-radius: 4px; font-weight: bold;">
-                            View
-                        </a>
+                <tr>
+                    <td class="job-card" style="${idx === jobs.length - 1 ? 'border-bottom: none;' : ''}">
+                        <a href="${job.url}" class="job-title">${job.title}</a>
+                        <div class="job-meta">
+                            <span class="job-company">${job.company || 'N/A'}</span>
+                            <span class="dot">·</span>
+                            <span class="job-location">${job.location || 'N/A'}</span>
+                        </div>
+                        <a href="${job.url}" class="job-apply">Apply →</a>
                     </td>
                 </tr>
             `;
         });
 
-        portalsHtml += `
-                    </tbody>
-                </table>
-            </div>
-        `;
+        portalsHtml += `</table>`;
     });
+
+    const total = data.matchedJobs.length;
 
     return `
         <!DOCTYPE html>
@@ -73,206 +58,259 @@ const generateMail = (data) => {
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <style>
-                * {
+                body {
                     margin: 0;
                     padding: 0;
-                    box-sizing: border-box;
-                }
-                
-                body {
+                    background-color: #f1f5f9;
                     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-                    background-color: #f5f5f5;
-                    color: #333;
+                    line-height: 1.5;
+                    color: #1e293b;
+                }
+                .outer {
+                    width: 100%;
+                    background-color: #f1f5f9;
+                    padding: 24px 0;
+                }
+                .container {
+                    max-width: 560px;
+                    margin: 0 auto;
+                    background-color: #ffffff;
+                    border-radius: 16px;
+                    overflow: hidden;
+                    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+                }
+                .header {
+                    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+                    padding: 36px 32px 28px;
+                    text-align: center;
+                }
+                .header h1 {
+                    margin: 0 0 6px;
+                    font-size: 22px;
+                    color: #ffffff;
+                    font-weight: 700;
+                    letter-spacing: -0.3px;
+                }
+                .header p {
+                    margin: 0;
+                    font-size: 13px;
+                    color: #94a3b8;
+                }
+                .stats {
+                    background: #f8fafc;
+                    padding: 20px 32px;
+                    text-align: center;
+                    border-bottom: 1px solid #e2e8f0;
+                }
+                .stats-number {
+                    font-size: 32px;
+                    font-weight: 700;
+                    color: #0f172a;
+                    line-height: 1;
+                }
+                .stats-label {
+                    font-size: 13px;
+                    color: #64748b;
+                    margin-top: 4px;
+                }
+                .content {
+                    padding: 24px 32px 8px;
+                }
+                .greeting {
+                    font-size: 15px;
+                    color: #475569;
+                    margin: 0 0 20px;
                     line-height: 1.6;
                 }
-                
-                .email-container {
-                    max-width: 600px;
-                    margin: 0 auto;
-                    background-color: white;
-                    padding: 0;
-                }
-                
-                .header {
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                    color: white;
-                    padding: 30px 20px;
-                    text-align: center;
-                }
-                
-                .header h1 {
-                    font-size: 24px;
-                    margin-bottom: 10px;
-                }
-                
-                .header p {
-                    font-size: 14px;
-                    opacity: 0.9;
-                }
-                
-                .content {
-                    padding: 30px 20px;
-                }
-                
-                .portal-section {
-                    margin-bottom: 25px;
-                    border-radius: 8px;
-                    overflow: hidden;
-                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-                }
-                
-                .portal-header {
-                    display: flex;
-                    align-items: center;
-                    gap: 10px;
-                    padding: 15px 20px;
-                    color: white;
-                    font-weight: bold;
-                }
-                
-                .portal-icon {
-                    font-size: 20px;
-                }
-                
-                .portal-name {
-                    flex: 1;
-                    font-size: 16px;
-                }
-                
-                .portal-count {
-                    font-size: 12px;
-                    opacity: 0.9;
-                    background-color: rgba(255,255,255,0.2);
-                    padding: 4px 8px;
-                    border-radius: 4px;
-                }
-                
-                table {
+                .portal {
                     width: 100%;
-                    border-collapse: collapse;
+                    border-collapse: separate;
+                    border-spacing: 0;
+                    margin-bottom: 20px;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 10px;
+                    overflow: hidden;
                 }
-                
-                tr:last-child {
-                    border-bottom: none !important;
+                .portal-title {
+                    padding: 12px 16px;
+                    font-size: 14px;
+                    font-weight: 600;
+                    color: #0f172a;
+                    background: #f8fafc;
+                    border-bottom: 1px solid #e2e8f0;
                 }
-                
-                a {
-                    color: #667eea;
+                .portal-count {
+                    float: right;
+                    display: inline-block;
+                    padding: 1px 8px;
+                    font-size: 11px;
+                    font-weight: 600;
+                    color: #64748b;
+                    background: #e2e8f0;
+                    border-radius: 10px;
+                }
+                .job-card {
+                    padding: 14px 16px;
+                    border-bottom: 1px solid #f1f5f9;
+                    position: relative;
+                }
+                .job-title {
+                    font-size: 15px;
+                    font-weight: 600;
+                    color: #0f172a;
+                    text-decoration: none;
+                    display: block;
+                    margin-bottom: 4px;
+                    line-height: 1.4;
+                }
+                .job-title:hover {
+                    color: #3b82f6;
+                }
+                .job-meta {
+                    font-size: 13px;
+                    color: #64748b;
+                }
+                .job-company {
+                    font-weight: 500;
+                    color: #475569;
+                }
+                .dot {
+                    margin: 0 4px;
+                    color: #cbd5e1;
+                }
+                .job-location {
+                    color: #64748b;
+                }
+                .job-apply {
+                    display: inline-block;
+                    margin-top: 8px;
+                    font-size: 12px;
+                    font-weight: 600;
+                    color: #3b82f6;
                     text-decoration: none;
                 }
-                
-                a:hover {
-                    text-decoration: underline;
+                .job-apply:hover {
+                    color: #2563eb;
                 }
-                
-                .footer {
-                    background-color: #f9f9f9;
-                    padding: 20px;
-                    text-align: center;
-                    font-size: 12px;
-                    color: #666;
-                    border-top: 1px solid #eee;
+                .resume-section {
+                    margin: 32px 0 0;
+                    padding: 20px 0 0;
+                    border-top: 1px solid #e2e8f0;
                 }
-                
+                .resume-label {
+                    font-size: 13px;
+                    font-weight: 600;
+                    color: #0f172a;
+                    margin: 0 0 10px;
+                }
                 .resume-link {
                     display: inline-block;
-                    margin-top: 10px;
-                    padding: 10px 20px;
-                    background-color: #667eea;
-                    color: white;
+                    padding: 10px 24px;
+                    font-size: 13px;
+                    font-weight: 600;
+                    color: #ffffff;
+                    background: #0f172a;
+                    border-radius: 8px;
                     text-decoration: none;
-                    border-radius: 4px;
-                    font-weight: bold;
                 }
-                
+                .resume-link:hover {
+                    background: #1e293b;
+                }
+                .footer {
+                    padding: 24px 32px;
+                    text-align: center;
+                    font-size: 11px;
+                    color: #94a3b8;
+                    line-height: 1.6;
+                }
+                .footer strong {
+                    color: #64748b;
+                }
                 @media (max-width: 600px) {
-                    .email-container {
-                        width: 100%;
+                    .outer {
+                        padding: 0;
                     }
-                    
-                    .content {
-                        padding: 20px 15px;
+                    .container {
+                        max-width: 100%;
+                        border-radius: 0;
                     }
-                    
-                    .portal-header {
-                        flex-wrap: wrap;
-                        gap: 8px;
+                    .header {
+                        padding: 28px 20px 24px;
                     }
-                    
-                    .portal-name {
-                        flex: 1 0 100%;
-                    }
-                    
-                    table {
-                        font-size: 13px;
-                    }
-                    
-                    td {
-                        padding: 8px 5px !important;
-                    }
-                    
-                    a.view-btn {
-                        padding: 5px 10px !important;
-                        font-size: 11px !important;
-                    }
-                }
-                
-                @media (max-width: 480px) {
                     .header h1 {
                         font-size: 20px;
                     }
-                    
                     .content {
-                        padding: 15px 10px;
+                        padding: 20px 16px 8px;
                     }
-                    
-                    table {
+                    .portal {
+                        margin-bottom: 16px;
+                    }
+                    .job-card {
+                        padding: 12px 14px;
+                    }
+                    .job-title {
+                        font-size: 14px;
+                    }
+                    .footer {
+                        padding: 20px 16px;
+                    }
+                }
+                @media (max-width: 400px) {
+                    .header h1 {
+                        font-size: 18px;
+                    }
+                    .stats-number {
+                        font-size: 28px;
+                    }
+                    .job-meta {
                         font-size: 12px;
-                    }
-                    
-                    td {
-                        padding: 6px 4px !important;
-                    }
-                    
-                    .portal-header {
-                        padding: 12px 15px;
-                    }
-                    
-                    a.view-btn {
-                        padding: 4px 8px !important;
-                        font-size: 10px !important;
                     }
                 }
             </style>
         </head>
         <body>
-            <div class="email-container">
-                <div class="header">
-                    <h1>🚀 Your Job Hunt Automation</h1>
-                    <p>Fresh Opportunities Found - ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
-                </div>
-                
-                <div class="content">
-                    <p style="margin-bottom: 20px;">Hi there!</p>
-                    <p style="margin-bottom: 20px;">
-                        We've found <strong>${data.matchedJobs.length}</strong> new job opportunities that match your profile across multiple job portals. 
-                        Here are the latest positions grouped by job portal:
-                    </p>
-                    
-                    ${portalsHtml}
-                    
-                    <p style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
-                        <strong>📎 Your Resume:</strong><br>
-                        <a href="${data.resumeUrl}" class="resume-link">View/Download Resume</a>
-                    </p>
-                </div>
-                
-                <div class="footer">
-                    <p>This is an automated email from your Job Search Automation Agent.</p>
-                    <p>Powered by Node.js & Playwright | Running on GitHub Actions</p>
-                    <p style="margin-top: 10px; color: #999;">Last updated: ${new Date().toLocaleString()}</p>
-                </div>
-            </div>
+            <table class="outer" cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tr>
+                    <td align="center">
+                        <table class="container" cellpadding="0" cellspacing="0" border="0">
+                            <tr>
+                                <td class="header">
+                                    <h1>Job Search Report</h1>
+                                    <p>${new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="stats">
+                                    <div class="stats-number">${total}</div>
+                                    <div class="stats-label">new opportunities found</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="content">
+                                    <p class="greeting">
+                                        Here are the latest positions matching your profile, grouped by source.
+                                    </p>
+                                    ${portalsHtml}
+                                    <table class="resume-section" cellpadding="0" cellspacing="0" border="0" width="100%">
+                                        <tr>
+                                            <td>
+                                                <p class="resume-label">Your Resume</p>
+                                                <a href="${data.resumeUrl}" class="resume-link">View Resume</a>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="footer">
+                                    Sent by your Job Search Automation &middot; Updated ${new Date().toLocaleString()}
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
         </body>
         </html>
     `;
