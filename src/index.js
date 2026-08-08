@@ -26,12 +26,38 @@ const {
 
 const {
     JOB_SEARCHES,
-    RESUME_URL
+    RESUME_URL,
+    SEND_EMAIL_WHEN_NO_NEW_JOBS
 } = require("./config/constants");
+
+const {
+    jobKey,
+    loadSeenKeys,
+    saveSeenKeys
+} = require("./services/state.service");
 
 async function main() {
 
     let allJobs = [];
+    let fetchedCount = 0;
+
+    const seenKeys = loadSeenKeys();
+
+    const addJobs = (jobs) => {
+        fetchedCount += jobs.length;
+
+        let newCount = 0;
+        for (const job of jobs) {
+            const key = jobKey(job);
+            if (seenKeys.has(key)) {
+                continue;
+            }
+            seenKeys.add(key);
+            allJobs.push(job);
+            newCount++;
+        }
+        return newCount;
+    };
 
     // ===== LinkedIn Jobs =====
     console.log("\n📌 Fetching Jobs from LinkedIn\n");
@@ -49,10 +75,8 @@ async function main() {
             );
 
         console.log(
-            `✅ Fetched ${jobs.length} jobs from LinkedIn`
+            `✅ Fetched ${jobs.length} jobs from LinkedIn (${addJobs(jobs)} new)`
         );
-
-        allJobs = [...allJobs, ...jobs];
     }
 
     // ===== Indeed Jobs =====
@@ -70,10 +94,8 @@ async function main() {
             );
 
         console.log(
-            `✅ Fetched ${jobs.length} jobs from Indeed`
+            `✅ Fetched ${jobs.length} jobs from Indeed (${addJobs(jobs)} new)`
         );
-
-        allJobs = [...allJobs, ...jobs];
     }
 
     // ===== Naukri Jobs =====
@@ -91,10 +113,8 @@ async function main() {
             );
 
         console.log(
-            `✅ Fetched ${jobs.length} jobs from Naukri`
+            `✅ Fetched ${jobs.length} jobs from Naukri (${addJobs(jobs)} new)`
         );
-
-        allJobs = [...allJobs, ...jobs];
     }
 
     // ===== Glassdoor Jobs =====
@@ -112,10 +132,8 @@ async function main() {
             );
 
         console.log(
-            `✅ Fetched ${jobs.length} jobs from Glassdoor`
+            `✅ Fetched ${jobs.length} jobs from Glassdoor (${addJobs(jobs)} new)`
         );
-
-        allJobs = [...allJobs, ...jobs];
     }
 
     // ===== Stack Overflow Jobs =====
@@ -133,22 +151,28 @@ async function main() {
             );
 
         console.log(
-            `✅ Fetched ${jobs.length} jobs from Stack Overflow`
+            `✅ Fetched ${jobs.length} jobs from Stack Overflow (${addJobs(jobs)} new)`
         );
-
-        allJobs = [...allJobs, ...jobs];
     }
 
     console.log(
-        `\n🎯 Total fetched ${allJobs.length} jobs from all platforms\n`
+        `\n🎯 Fetched ${fetchedCount} jobs total, ${allJobs.length} new since last run\n`
     );
 
-    console.log("Sending email with job results");
+    if (allJobs.length === 0 && !SEND_EMAIL_WHEN_NO_NEW_JOBS) {
+        console.log("😴 No new jobs found. Skipping email.");
+        saveSeenKeys(seenKeys);
+        return;
+    }
+
+    console.log("Sending email with new job results");
 
     await sendMail({
         matchedJobs: allJobs,
         resumeUrl: RESUME_URL
     });
+
+    saveSeenKeys(seenKeys);
 
     console.log("Email sent successfully!");
 

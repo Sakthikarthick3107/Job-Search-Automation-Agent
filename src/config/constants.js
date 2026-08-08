@@ -47,6 +47,10 @@ module.exports = {
 
     JOB_LIMIT: 20,
 
+    // Set "true" to send an email even when there are no new jobs
+    SEND_EMAIL_WHEN_NO_NEW_JOBS:
+        process.env.SEND_EMAIL_WHEN_NO_NEW_JOBS === "true",
+
     // Load job searches from JSON config file
     JOB_SEARCHES: loadJobSearches()
 };
